@@ -3,7 +3,7 @@ package com.wellbeing_waitlist.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import com.wellbeing_waitlist.service.EmergencyLevelService;
 import com.wellbeing_waitlist.service.PatientService;
 import com.wellbeing_waitlist.model.Patient;
 import com.wellbeing_waitlist.repository.PatientRepository;
@@ -13,9 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1")
 public class PatientController {
+
+    @Autowired
+    private EmergencyLevelService emergencyLevelService;
 
     @Autowired
     private PatientService patientService;
@@ -23,7 +27,7 @@ public class PatientController {
     @Autowired
     private PatientRepository patientRepository;
 
-    private static final String ADMIN_PASSWORD = System.getenv("DB_PASSWORD"); // Environment Variable
+    private static final String ADMIN_PASSWORD = "root";
 
     @GetMapping("/register")
     public String showRegisterForm() {
@@ -43,9 +47,8 @@ public class PatientController {
             return new ResponseEntity<>(patient, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(
-                Map.of("error", "Failed to register patient: " + e.getMessage()), 
-                HttpStatus.BAD_REQUEST
-            );
+                    Map.of("error", "Failed to register patient: " + e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -62,8 +65,15 @@ public class PatientController {
     }
 
     @GetMapping("/patients")
-    public ResponseEntity<List<Patient>> getAllPatients() {
-        List<Patient> patients = patientRepository.findAll();
+    public ResponseEntity<List<Patient>> getPatients(@RequestParam(required = false) Boolean cured) {
+        List<Patient> patients;
+
+        if (cured != null) {
+            patients = patientService.findByCured(cured);
+        } else {
+            patients = patientService.findAll();
+        }
+
         if (patients.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -74,7 +84,7 @@ public class PatientController {
     public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
         Optional<Patient> patient = patientRepository.findById(id);
         return patient.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/admin-login")
@@ -85,9 +95,22 @@ public class PatientController {
             return new ResponseEntity<>(patients, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(
-                Map.of("error", "Incorrect Password. Access Denied."), 
-                HttpStatus.UNAUTHORIZED
-            );
+                    Map.of("error", "Incorrect Password. Access Denied."),
+                    HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @PostMapping("/patients")
+    public ResponseEntity<?> savePatient(@RequestBody Patient patient) {
+        try {
+            int emergencyLevel = emergencyLevelService.calculateEmergencyLevel(patient.getProblem());
+            patient.setEmergencyLevel(emergencyLevel);
+            patientRepository.save(patient);
+            return new ResponseEntity<>(patient, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", "Error saving patient: " + e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

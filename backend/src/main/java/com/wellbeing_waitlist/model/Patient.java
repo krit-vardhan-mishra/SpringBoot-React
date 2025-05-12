@@ -1,10 +1,12 @@
 package com.wellbeing_waitlist.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name="patient")
+@Data
 public class Patient {
 
     @Id
@@ -41,70 +43,6 @@ public class Patient {
         this.problem = problem;
         this.arrivalTime = new Timestamp(System.currentTimeMillis());
         this.cured = false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getProblem() {
-        return problem;
-    }
-
-    public void setProblem(String problem) {
-        this.problem = problem;
-    }
-
-    public int getEmergencyLevel() {
-        return emergencyLevel;
-    }
-
-    public void setEmergencyLevel(int emergencyLevel) {
-        this.emergencyLevel = emergencyLevel;
-    }
-
-    public Timestamp getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(Timestamp arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
-
-    public boolean isCured() {
-        return cured;
-    }
-
-    public void setCured(boolean cured) {
-        this.cured = cured;
     }
 
     @Override

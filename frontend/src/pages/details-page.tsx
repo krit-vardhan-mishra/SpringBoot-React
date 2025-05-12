@@ -24,8 +24,8 @@ const item = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.3, 
-      ease: "easeInOut", 
+      duration: 0.3,
+      ease: "easeInOut",
     },
   },
 };
@@ -40,7 +40,9 @@ const DetailsPage = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await fetch('/api/patients');
+        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+        const url = isAdmin ? '/api/v1/patients' : '/api/v1/patients?cured=false';
+        const response = await fetch(url);
         if (response.ok) {
           const data: Patient[] = await response.json();
           setPatients(data);
@@ -60,9 +62,7 @@ const DetailsPage = () => {
     const queryParams = new URLSearchParams(window.location.search);
     const urlMessage = queryParams.get('message');
 
-    if (urlMessage) {
-      setMessage(urlMessage);
-    }
+    if (urlMessage) setMessage(urlMessage);
   }, []);
 
   const formatDate = (dateString: string): string => {

@@ -11,7 +11,7 @@ const PatientForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/patients', formData);
+      const response = await axios.post('http://localhost:8080/api/v1/patients', formData);
       console.log('Saved:', response.data);
     } catch (error) {
       console.error('Error saving patient:', error);

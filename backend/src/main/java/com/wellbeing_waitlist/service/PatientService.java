@@ -2,7 +2,9 @@ package com.wellbeing_waitlist.service;
 
 import com.wellbeing_waitlist.model.Patient;
 import com.wellbeing_waitlist.repository.PatientRepository;
-import com.wellbeing_waitlist.service.EmergencyLevelService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +25,13 @@ public class PatientService {
         patient.setEmergencyLevel(emergencyLevel);
         patientRepository.save(patient);
     }
-}
 
+    public List<Patient> findByCured(boolean cured) {
+        return patientRepository.findByCured(cured);
+    }
+
+    public List<Patient> findAll() {
+        return patientRepository.findAll();
+    }
+
+}
