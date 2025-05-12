@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.wellbeing_waitlist.wellbeing_waitlist.WellbeingWaitlistApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.674 s -- in com.wellbeing_waitlist.wellbeing_waitlist.WellbeingWaitlistApplicationTests
