@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+body.light {
+  background-color: white;
+  color: black;
+}
+
+body.dark {
+  background-color: black;
+  color: white;
+}
+
+body {
+  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+}
+
+* {
+  transition: color 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.heartbeat {
+  animation: heartbeat 1.3s infinite ease-in-out;
+}
