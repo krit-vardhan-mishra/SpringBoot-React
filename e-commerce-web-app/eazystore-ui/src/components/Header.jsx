@@ -86,9 +86,12 @@ function Header() {
           ? 'backdrop-blur-md bg-opacity-90 shadow-lg'
           : 'bg-opacity-100'
           } ${isDarkMode
-            ? `${isScrolled ? 'bg-gray-950' : 'bg-gray-950'} text-white border-white`
-            : `${isScrolled ? 'bg-white' : 'bg-white'} text-black border-gray-200`
+            ? 'text-white border-gray-600'
+            : 'text-black border-gray-300'
           } border-b`}
+        style={{
+          backgroundColor: isDarkMode ? '#19242D' : '#F0F3F2'
+        }}
         variants={headerVariants}
         initial="initial"
         animate="animate"
@@ -198,9 +201,12 @@ function Header() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            className={`fixed top-0 left-0 right-0 z-30 md:hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'
-              } border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
-            style={{ paddingTop: '80px' }}
+            className={`fixed top-0 left-0 right-0 z-30 md:hidden border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-300'
+              }`}
+            style={{
+              paddingTop: '80px',
+              backgroundColor: isDarkMode ? '#19242D' : '#F0F3F2'
+            }}
             variants={mobileMenuVariants}
             initial="closed"
             animate="open"

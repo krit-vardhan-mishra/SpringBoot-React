@@ -14,6 +14,8 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     document.body.className = isDarkMode ? 'dark' : 'light';
+    document.body.style.backgroundColor = isDarkMode ? '#0E1520' : '#F0F3F2';
+    
     if (themeTransition.active) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -23,11 +25,11 @@ export const ThemeProvider = ({ children }) => {
 
   const toggleTheme = (clickCoords) => {
     const nextIsDarkMode = !isDarkMode;
-    const toColor = nextIsDarkMode ? 'bg-gray-900' : 'bg-white';
+    const toColor = nextIsDarkMode ? '#0E1520' : '#F0F3F2';
 
     setThemeTransition({
       active: true,
-      fromX: clickCoords?.clientX || window.innerWidth / 2, 
+      fromX: clickCoords?.clientX || window.innerWidth / 2,
       fromY: clickCoords?.clientY || window.innerHeight / 2,
       toColor: toColor
     });
@@ -35,13 +37,13 @@ export const ThemeProvider = ({ children }) => {
     setTimeout(() => {
       setIsDarkMode(nextIsDarkMode);
       setThemeTransition(prev => ({ ...prev, active: false }));
-    }, 500); 
+    }, 500);
   };
 
   const calculateMaxDimension = (x, y) => {
     const maxX = Math.max(x, window.innerWidth - x);
     const maxY = Math.max(y, window.innerHeight - y);
-    return Math.sqrt(maxX * maxX + maxY * maxY); 
+    return Math.sqrt(maxX * maxX + maxY * maxY);
   };
 
   return (
@@ -56,23 +58,23 @@ export const ThemeProvider = ({ children }) => {
             style={{
               left: themeTransition.fromX,
               top: themeTransition.fromY,
-              backgroundColor: isDarkMode ? 'white' : 'black',
+              backgroundColor: isDarkMode ? '#F0F3F2' : '#0E1520',
             }}
             initial={{
               width: 0,
               height: 0,
-              x: '-50%', 
-              y: '-50%', 
+              x: '-50%',
+              y: '-50%',
               opacity: 1,
             }}
             animate={{
-              width: calculateMaxDimension(themeTransition.fromX, themeTransition.fromY) * 2, // Expand to cover screen
-              height: calculateMaxDimension(themeTransition.fromX, themeTransition.fromY) * 2, // Expand to cover screen
-              backgroundColor: themeTransition.toColor.includes('white') ? 'white' : 'rgb(17 24 39)', // Use rgb for Tailwind bg-gray-900
+              width: calculateMaxDimension(themeTransition.fromX, themeTransition.fromY) * 2,
+              height: calculateMaxDimension(themeTransition.fromX, themeTransition.fromY) * 2,
+              backgroundColor: themeTransition.toColor,
               opacity: 1,
             }}
             exit={{
-              opacity: 0, 
+              opacity: 0,
               transition: { duration: 0.3, ease: "easeOut" }
             }}
             transition={{

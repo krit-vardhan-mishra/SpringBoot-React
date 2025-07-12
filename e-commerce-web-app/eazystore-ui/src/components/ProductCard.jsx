@@ -1,22 +1,46 @@
-import React from 'react'
-import { Button } from "./ui/Button"
+import React from 'react';
+import { Button } from "./ui/Button";
+import { useTheme } from '../context/ThemeContext';
+import { motion } from 'framer-motion'; 
 
 const ProductCard = ({sticker, title, subTitle, price}) => {
+  const {isDarkMode} = useTheme();
+
   return (
-    <div className='rounded-md h-auto w-55 m-3 shadow-md overflow-hidden hover:border-2 hover:border-black dark:hover:border-white transition-transform ease-in duration-500'>
-      <div className='overflow-hidden h-60 bg-gray-400'>
-        <img 
-        className='w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-105' 
-        src={sticker} 
-        alt='Sticker'/>
+    <motion.div 
+      className={`rounded-md h-100 w-60 m-8 shadow-md overflow-hidden border-2 flex flex-col ${isDarkMode? 'border-gray-600' : 'border-gray-100'}`}
+      initial={false}
+      whileHover={{
+        scale: 1.03, 
+        borderColor: isDarkMode ? 'white' : 'black',
+        boxShadow: isDarkMode
+          ? '0px 10px 15px -3px rgba(255,255,255,0.1), 0px 4px 6px -2px rgba(255,255,255,0.05)'
+          : '0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -2px rgba(0,0,0,0.05)',
+      }}
+      transition={{
+        duration: 0.3, 
+        ease: "easeInOut",
+        borderColor: { duration: 0.15 },
+        boxShadow: { duration: 0.15 } 
+      }}
+    >
+      <div className='overflow-hidden h-60 bg-gray-400 flex-shrink-0'>
+        <img
+         className='w-full h-full relative object-cover transition-transform duration-500 ease-in-out hover:scale-105'
+         src={sticker}
+         alt='Sticker'/>
       </div>
-      <p className='ps-2 pt-2 text-base font-semibold'>{title || 'Title'}</p>
-      <p className='ps-2 text-sm'>{subTitle || 'Sub-Title'}</p>
-      <div className="flex justify-between items-center p-2 gap-2 mt-8 mb-2">
-        <Button className='text-[#7146c0] bg-[#f2f1fc]'>${price ?? 0}</Button>
-        <Button className='bg-[#4c1eab] text-white'>Add to Cart</Button>
+
+      <div className={`flex-1 flex flex-col p-2 ${isDarkMode? 'bg-[#19242D]' : 'bg-[#ffff]'}`}>
+        <p className='ps-2 pt-2 text-base font-semibold min-h-[1.5rem] line-clamp-1'>{title || 'Title'}</p>
+        <p className='ps-2 text-sm flex-1 min-h-[2.5rem] line-clamp-2 mb-2'>{subTitle || 'Sub-Title'}</p>
+
+        <div className="flex justify-between items-center p-2 gap-2 mt-auto mb-2">
+          <Button className={`${isDarkMode? 'text-white bg-[#2E3947]' : 'text-[#4a2dce] bg-[#beb9e6]'}`}>${price ?? 0}</Button>
+          <Button className='bg-[#4c1eab] text-white'>Add to Cart</Button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
