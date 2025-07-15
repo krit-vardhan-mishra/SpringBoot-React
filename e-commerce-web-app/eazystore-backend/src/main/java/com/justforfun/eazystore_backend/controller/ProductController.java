@@ -20,7 +20,7 @@ public class ProductController {
         return "<h1>Hello From Mapping Controller...!</h1>";
     }
 
-    @GetMapping
+    @GetMapping("/")
     public List<ProductDto> getProducts() {
         return productService.getProducts();
     }
