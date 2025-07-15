@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -9,5 +9,11 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      (function () {
+        const theme = localStorage.getItem("theme");
+        document.body.classList.add(theme === "dark" ? "dark" : "light");
+      })();
+    </script>
   </body>
 </html>

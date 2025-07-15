@@ -10,6 +10,7 @@ function Header() {
   const { isDarkMode } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   const navItems = [
     { to: '/home', label: 'Home' },
@@ -128,50 +129,47 @@ function Header() {
               </div>
 
               <nav className="flex items-center gap-6">
-                {navItems.map((item, index) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    className="relative group"
-                  >
-                    {({ isActive }) => (
-                      <motion.div
-                        className={`relative px-3 py-2 rounded-lg transition-all duration-300 ${isActive
-                          ? isDarkMode
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-blue-50 text-blue-600'
-                          : 'hover:bg-opacity-10 hover:bg-gray-500'
-                          }`}
-                        variants={navLinkVariants}
-                        initial="initial"
-                        animate="animate"
-                        whileHover="hover"
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <span className={`text-sm font-medium ${item.isIcon ? 'text-lg' : ''
-                          }`}>
-                          {item.label}
-                        </span>
+                {navItems.map((item, index) => {
+                  const isHome = item.to === '/home' && (location.pathname === '/' || location.pathname === '/home');
 
-                        {/* Animated underline */}
-                        {isActive && (
+                  return (
+                    <NavLink key={item.to} to={item.to} className="relative group">
+                      {({ isActive }) => {
+                        const active = isHome || isActive;
+
+                        return (
                           <motion.div
-                            layoutId="activeNavItem"
-                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-                            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                          />
-                        )}
+                            className={`relative px-3 py-2 rounded-lg transition-all duration-300 ${active
+                              ? isDarkMode
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-blue-50 text-blue-600'
+                              : 'hover:bg-opacity-10 hover:bg-gray-500'
+                              }`}
+                            variants={navLinkVariants}
+                            initial="initial"
+                            animate="animate"
+                            whileHover="hover"
+                            transition={{ delay: index * 0.1 }}
+                          >
+                            <span className={`text-sm font-medium ${item.isIcon ? 'text-lg' : ''
+                              }`}>
+                              {item.label}
+                            </span>
 
-                        {/* Hover effect */}
-                        <motion.div
-                          className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                          initial={{ scale: 0.8 }}
-                          whileHover={{ scale: 1 }}
-                        />
-                      </motion.div>
-                    )}
-                  </NavLink>
-                ))}
+                            {/* Animated underline */}
+                            {active && (
+                              <motion.div
+                                layoutId="activeNavItem"
+                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+                                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                              />
+                            )}
+                          </motion.div>
+                        );
+                      }}
+                    </NavLink>
+                  );
+                })}
               </nav>
             </div>
 

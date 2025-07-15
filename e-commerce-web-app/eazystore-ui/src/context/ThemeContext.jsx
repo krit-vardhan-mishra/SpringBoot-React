@@ -4,7 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) return storedTheme === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
   const [themeTransition, setThemeTransition] = useState({
     active: false,
     fromX: 0,
@@ -13,14 +18,16 @@ export const ThemeProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    document.body.className = isDarkMode ? 'dark' : 'light';
+    const classToAdd = isDarkMode ? 'dark' : 'light';
+    const classToRemove = isDarkMode ? 'light' : 'dark';
+
+    document.body.classList.add(classToAdd);
+    document.body.classList.remove(classToRemove);
+
     document.body.style.backgroundColor = isDarkMode ? '#0E1520' : '#F0F3F2';
-    
-    if (themeTransition.active) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+
+    document.body.style.overflow = themeTransition.active ? 'hidden' : '';
   }, [isDarkMode, themeTransition.active]);
 
   const toggleTheme = (clickCoords) => {
@@ -31,7 +38,7 @@ export const ThemeProvider = ({ children }) => {
       active: true,
       fromX: clickCoords?.clientX || window.innerWidth / 2,
       fromY: clickCoords?.clientY || window.innerHeight / 2,
-      toColor: toColor
+      toColor
     });
 
     setTimeout(() => {
@@ -54,7 +61,7 @@ export const ThemeProvider = ({ children }) => {
         {themeTransition.active && (
           <motion.div
             key="theme-transition-overlay"
-            className={`fixed inset-0 z-40 rounded-full`}
+            className="fixed inset-0 z-40 rounded-full"
             style={{
               left: themeTransition.fromX,
               top: themeTransition.fromY,
