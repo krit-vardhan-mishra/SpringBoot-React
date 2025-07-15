@@ -11,7 +11,7 @@ import java.time.Instant;
 public class ProductDto {
 
     private Long productId;
-    private String title;
+    private String name;
     private String subTitle;
     private BigDecimal price;
     private int popularity;

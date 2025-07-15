@@ -3,13 +3,23 @@ import ProductCard from '../components/ProductCard';
 import SortBy from '../components/ui/SortBy';
 import Search from '../components/ui/Search';
 import Context from '../components/Context';
-import products from '../data/products';
+import apiClient from '../api/apiClient';
 
 const HomePage = () => {
+  const [products, setProducts] = useState([]);
   const [sorting, setSorting] = useState("popularity");
   const sortedProducts = [...products]
   const [searching, setSearching] = useState('');
   const [filteredProducts, setFilteredProducts] = useState(sortedProducts);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [])
+
+  const fetchProducts = async () => {
+    const reponse = await apiClient.get("/products/");
+    setProducts(reponse.data);
+  }
 
   useEffect(() => {
     document.title = "Home";
@@ -27,7 +37,7 @@ const HomePage = () => {
     const timeout = setTimeout(() => {
       const lowerSearch = searching.toLowerCase();
       const filtered = sortedProducts.filter(product =>
-        product.title.toLowerCase().includes(lowerSearch) || product.subTitle.toLowerCase().includes(lowerSearch)
+        product.name?.toLowerCase().includes(lowerSearch) || product.subTitle?.toLowerCase().includes(lowerSearch)
       );
       setFilteredProducts(filtered);
     }, 100);
@@ -47,14 +57,21 @@ const HomePage = () => {
         </div>
 
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 justify-items-center'>
-          {filteredProducts.map(product => (
-            <ProductCard
-              key={product.productId}
-              title={product.title}
-              subTitle={product.subTitle}
-              price={product.price}
-              sticker={product.imageUrl} />
-          ))}
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map(product => (
+              <ProductCard
+                key={product.productId}
+                title={product.name}
+                subTitle={product.subTitle}
+                price={product.price}
+                sticker={`/stickers/${product.imageUrl}`}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center text-red-600 font-bold text-lg mt-10">
+              No Products Available
+            </div>
+          )}
         </div>
       </div>
     </div>
