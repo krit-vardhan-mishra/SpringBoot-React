@@ -15,5 +15,6 @@
             "database": "eazystore_db",
             "username": "root"
         }
-    ]
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
 }

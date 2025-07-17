@@ -15,13 +15,9 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "<h1>Hello From Mapping Controller...!</h1>";
-    }
-
     @GetMapping("/")
-    public List<ProductDto> getProducts() {
+    public List<ProductDto> getProducts() throws InterruptedException {
+        Thread.sleep(1500);
         return productService.getProducts();
     }
 

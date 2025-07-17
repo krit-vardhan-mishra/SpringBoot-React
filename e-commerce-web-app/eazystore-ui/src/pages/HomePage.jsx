@@ -73,6 +73,16 @@ const HomePage = () => {
     return filtered;
   }, [sortedProducts, searching, screenWidth]);
 
+  const searchProps = useMemo(() => ({
+    value: searching,
+    onChange: setSearching
+  }), [searching]);
+
+  const sortByProps = useMemo(() => ({
+    value: sorting,
+    onChange: setSorting
+  }), [sorting]);
+
   if (loading) return <AnimatedLoading />;
   if (error) return <AnimatedError error={error} />;
 
@@ -84,8 +94,8 @@ const HomePage = () => {
         </div>
 
         <div className='flex flex-col sm:flex-row sm:justify-between items-center sm:items-center gap-4 mb-6 sm:pl-20 sm:pr-25'>
-          <Search value={searching} onChange={setSearching} />
-          <SortBy value={sorting} onChange={setSorting} />
+          <Search {...searchProps} />
+          <SortBy {...sortByProps} />
         </div>
 
         <div className='grid grid-cols-1 max-[800px]:grid-cols-1 max-[1100px]:grid-cols-2 min-[1100px]:grid-cols-3 gap-4 sm:gap-6 justify-items-center'>

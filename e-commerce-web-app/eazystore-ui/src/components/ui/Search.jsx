@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Input from '../ui/Input';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -16,7 +16,7 @@ const Search = ({ value, onChange }) => {
         className={`border-2 ${isDarkMode ? 'bg-[#383e45]' : 'bg-[#F0F3F2] border-[#4c1eab]'}`} 
       />
     </div>
-  )
-}
+  );
+};
 
-export default Search;
+export default React.memo(Search);
