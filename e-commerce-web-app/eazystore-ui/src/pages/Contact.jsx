@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { Form, useActionData, useNavigation } from 'react-router-dom';
+import { Form, useActionData, useNavigation, useSubmit } from 'react-router-dom';
 import apiClient from '../api/apiClient';
 import SuccessAnimation from '../components/SuccessAnimation';
+import { toast } from 'react-toastify';
 
 const Contact = () => {
   const { isDarkMode } = useTheme();
@@ -10,6 +11,8 @@ const Contact = () => {
   const navigation = useNavigation();
   const [showSuccess, setShowSuccess] = useState(false);
   const [formKey, setFormKey] = useState(0);
+  const formRef = useRef(null);
+  const submit = useSubmit();
 
   useEffect(() => {
     document.title = "Contact Us";
@@ -18,15 +21,16 @@ const Contact = () => {
   useEffect(() => {
     if (actionData?.success === 'true') {
       setShowSuccess(true);
-
-      const timer = setTimeout(() => {
-        setShowSuccess(false);
-        setFormKey(prev => prev + 1);
-      }, 3000);
-
-      return () => clearTimeout(timer);
     }
   }, [actionData]);
+
+  const handleAnimationComplete = () => {
+    setShowSuccess(false);
+    setFormKey(prev => prev + 1);
+    formRef.current?.reset();
+
+    toast.success("Your message has been submitted successfully...!");
+  }
 
   const isSubmitting = navigation.state === 'submitting';
 
@@ -39,9 +43,26 @@ const Contact = () => {
       : 'bg-white border-gray-600 text-black placeholder-gray-500 focus:ring-[#4c1eab]'
     }`;
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (!formRef.current) {
+      toast.error("Form reference is not available. Please try again.");
+      return;
+    }
+
+    const userConfirmed = window.confirm("Are you sure you want to submit the form?");
+
+    if (userConfirmed) {
+      const formData = new FormData(formRef.current);
+      submit(formData, { method: 'post' });
+    } else {
+      toast.info("Form submission cancelled.");
+    }
+  };
 
   if (showSuccess) {
-    return <SuccessAnimation />;
+    return <SuccessAnimation onComplete={handleAnimationComplete} />;
   }
 
   return (
@@ -55,7 +76,7 @@ const Contact = () => {
           We'd love to hear from you! If you have any questions, feedback, or suggestions, please don't hesitate to reach out.
         </p>
 
-        <Form key={formKey} method='POST' className="flex flex-col space-y-4">
+        <Form ref={formRef} onSubmit={handleSubmit} key={formKey} method='POST' className="flex flex-col space-y-4">
           {/* Name Input */}
           <div className="flex flex-col text-left">
             <label htmlFor="name" className={`text-lg font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Name</label>

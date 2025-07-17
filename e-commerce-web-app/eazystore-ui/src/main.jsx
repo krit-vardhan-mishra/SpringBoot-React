@@ -13,6 +13,7 @@ import Error from './pages/Error';
 import './index.css';
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ProductDetail from './components/ProductDetail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <Signup /> },
       { path: 'cart', element: <Cart /> },
+      { path: '/products/:productId', element: <ProductDetail /> },
     ],
   },
 ]);

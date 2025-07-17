@@ -103,10 +103,7 @@ const HomePage = () => {
             filteredProducts.map(product => (
               <ProductCard
                 key={product.productId}
-                title={product.name}
-                subTitle={product.subTitle}
-                price={product.price}
-                sticker={`/stickers/${product.imageUrl}`}
+                product={product}
               />
             ))
           ) : (
