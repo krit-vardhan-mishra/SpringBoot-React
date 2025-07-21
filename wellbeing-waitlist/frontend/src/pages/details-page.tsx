@@ -6,6 +6,8 @@ import planeImage from '../assets/images/plane-background.jpg';
 import logoHeaderImage from '../assets/images/logo-header.png';
 import logoFooterImage from '../assets/images/logo-footer.png';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { patientAPI, apiHelpers } from '../api/axios-setup';
+import { AxiosError } from 'axios';
 
 const container = {
   hidden: { opacity: 0 },
@@ -36,22 +38,21 @@ const DetailsPage = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const queryParams = new URLSearchParams(window.location.search);
+  const urlMessage = queryParams.get('message');
+  if (urlMessage) setMessage(urlMessage);
+  const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
 
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-        const url = isAdmin ? '/api/v1/patients' : '/api/v1/patients?cured=false';
-        const response = await fetch(url);
-        if (response.ok) {
-          const data: Patient[] = await response.json();
-          setPatients(data);
-        } else {
-          setMessage('Failed to load patient data');
-        }
+        const response = isAdmin
+          ? await patientAPI.getPatients(true)
+          : await patientAPI.getPatients(false);
+        setPatients(response.data);
       } catch (error) {
-        console.error('Error:', error);
-        setMessage('An error occurred while fetching patient data');
+        const axiosError = error as AxiosError;
+        setMessage(apiHelpers.handleError(axiosError));
       } finally {
         setLoading(false);
       }
@@ -78,74 +79,89 @@ const DetailsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center bg-no-repeat pt-16 relative"
+    <div className="min-h-screen bg-cover bg-center bg-no-repeat pt-20 pb-12 relative"
       style={{ backgroundImage: `url(${planeImage})` }}>
-
+      
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/60 to-purple-600/60 backdrop-blur-md z-0" />
+      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/70 to-purple-700/70 backdrop-blur-sm z-0" />
 
       {/* Logos */}
-      <motion.div className="relative z-10 text-center mt-8" variants={container} initial="hidden" animate="show">
-        <motion.img src={logoHeaderImage} alt="Header Logo" className="w-36 mx-auto mb-2" variants={item} />
-        <motion.img src={logoFooterImage} alt="Footer Logo" className="w-64 mx-auto" variants={item} />
+      <motion.div className="relative z-10 text-center mb-10" variants={container} initial="hidden" animate="show">
+        <motion.img src={logoHeaderImage} alt="Header Logo" className="w-32 mx-auto mb-4" variants={item} />
+        <motion.img src={logoFooterImage} alt="Footer Logo" className="w-56 mx-auto" variants={item} />
       </motion.div>
 
       {/* Main Content */}
-      <motion.div className="max-w-xl mx-auto mt-10 bg-white bg-opacity-90 rounded-2xl shadow-2xl p-8 backdrop-blur-lg z-10 relative"
+      <motion.div className="max-w-6xl mx-auto bg-white/95 rounded-2xl shadow-xl p-8 z-10 relative"
         variants={container} initial="hidden" animate="show">
-        <motion.h2 className="text-3xl font-semibold text-gray-800 underline mb-6 text-center" variants={item}>
-          Details of All Waiting Patients
+        <motion.h2 className="text-3xl font-bold text-gray-900 mb-8 text-center tracking-tight" variants={item}>
+          Patient Waiting List
         </motion.h2>
 
-        {message && <motion.p className="text-red-500 text-center mb-4" variants={item}>{message}</motion.p>}
+        {message && (
+          <motion.p className="text-red-600 bg-red-50 p-4 rounded-lg text-center mb-6" variants={item}>
+            {message}
+          </motion.p>
+        )}
 
         {loading ? (
-          <motion.p className="text-center text-gray-700" variants={item}>Loading patient data...</motion.p>
+          <motion.p className="text-center text-gray-600 text-lg" variants={item}>
+            Loading patient data...
+          </motion.p>
         ) : patients.length > 0 ? (
           <motion.div className="overflow-x-auto" variants={item}>
-            <table className="w-full border-collapse shadow-md rounded-lg bg-white">
+            <table className="w-full border-collapse bg-white rounded-lg overflow-hidden">
               <thead>
-                <tr>
-                  <th className="p-3 text-left border border-gray-300 bg-black text-white">ID</th>
-                  <th className="p-3 text-left border border-gray-300 bg-black text-white">Name</th>
-                  <th className="p-3 text-left border border-gray-300 bg-black text-white">Age</th>
-                  <th className="p-3 text-left border border-gray-300 bg-black text-white">Gender</th>
-                  <th className="p-3 text-left border border-gray-300 bg-black text-white">Problem</th>
-                  <th className="p-3 text-left border border-gray-300 bg-black text-white">Arrival Time</th>
-                  <th className="p-3 text-left border border-gray-300 bg-black text-white">Emergency Level</th>
+                <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                  <th className="p-4 text-left font-semibold text-sm uppercase tracking-wider">ID</th>
+                  <th className="p-4 text-left font-semibold text-sm uppercase tracking-wider">Name</th>
+                  <th className="p-4 text-left font-semibold text-sm uppercase tracking-wider">Age</th>
+                  <th className="p-4 text-left font-semibold text-sm uppercase tracking-wider">Gender</th>
+                  <th className="p-4 text-left font-semibold text-sm uppercase tracking-wider">Problem</th>
+                  <th className="p-4 text-left font-semibold text-sm uppercase tracking-wider">Arrival Time</th>
+                  <th className="p-4 text-left font-semibold text-sm uppercase tracking-wider">Emergency Level</th>
                 </tr>
               </thead>
               <tbody>
-                {patients.map((patient) => (
-                  <motion.tr key={patient.id} className="hover:bg-gray-100 transition duration-200" variants={item}>
-                    <td className="p-3 text-left border border-gray-300">{patient.id}</td>
-                    <td className="p-3 text-left border border-gray-300">{patient.name}</td>
-                    <td className="p-3 text-left border border-gray-300">{patient.age}</td>
-                    <td className="p-3 text-left border border-gray-300">{patient.gender}</td>
-                    <td className="p-3 text-left border border-gray-300">{patient.problem}</td>
-                    <td className="p-3 text-left border border-gray-300">{formatDate(patient.arrivalTime)}</td>
-                    <td className="p-3 text-left border border-gray-300">{patient.emergencyLevel}</td>
+                {patients.map((patient, index) => (
+                  <motion.tr 
+                    key={patient.id} 
+                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-indigo-50 transition-colors duration-200`} 
+                    variants={item}
+                  >
+                    <td className="p-4 text-gray-800">{index + 1}</td>
+                    <td className="p-4 text-gray-800 font-medium">{patient.name}</td>
+                    <td className="p-4 text-gray-800">{patient.age}</td>
+                    <td className="p-4 text-gray-800">{patient.gender}</td>
+                    <td className="p-4 text-gray-800">{patient.problem}</td>
+                    <td className="p-4 text-gray-800">{formatDate(patient.arrivalTime)}</td>
+                    <td className="p-4">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        patient.emergencyLevel} bg-green-100 text-green-800`}>
+                        {patient.emergencyLevel}
+                      </span>
+                    </td>
                   </motion.tr>
                 ))}
               </tbody>
             </table>
           </motion.div>
         ) : (
-          <motion.p className="text-center" variants={item}>No patients found.</motion.p>
+          <motion.p className="text-center text-gray-600 text-lg" variants={item}>
+            No patients found.
+          </motion.p>
         )}
 
-        <motion.div className="flex flex-col items-center mt-6 gap-2" variants={item}>
-          <p className="text-blue-700 font-medium">
-            <Link
-              to="/admin-login"
-              className="text-blue-600 underline hover:text-blue-800 transition-colors"
-            >
-              Only accessible by admins
-            </Link>
-          </p>
+        <motion.div className="flex flex-col items-center mt-8 gap-4" variants={item}>
+          {!isAdmin && <Link
+            to="/admin-login"
+            className="text-indigo-600 hover:text-indigo-800 font-medium underline transition-colors duration-200"
+          >
+            Admin Access Only
+          </Link>}
           <Link
             to="/"
-            className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-full transition duration-300"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full font-medium transition-colors duration-300"
           >
             Back to Home
           </Link>

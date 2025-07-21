@@ -37,7 +37,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/patients")
     public ResponseEntity<?> getPatients(@RequestParam(required = false) Boolean cured) {
         List<Patient> patients;
 

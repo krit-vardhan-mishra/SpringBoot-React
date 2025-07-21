@@ -6,6 +6,8 @@ import logoHeaderImage from '../assets/images/logo-header.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { patientAPI, apiHelpers } from '../api/axios-setup';
+import { AxiosError } from 'axios';
 
 const AdminLoginPage = () => {
   usePageTitle("Admin Login Page");
@@ -33,24 +35,15 @@ const AdminLoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      const response = await fetch('/api/v1/admin-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-
-      if (response.ok) {
-        sessionStorage.setItem('isAdmin', 'true'); 
+      const response = await patientAPI.adminLogin(password);
+      if (response.status === 200) {
+        sessionStorage.setItem('isAdmin', 'true');
         navigate('/admin-dashboard');
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Invalid password. Please try again.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      setErrorMessage('An error occurred. Please try again later.');
+      const axiosError = error as AxiosError;
+      setErrorMessage(apiHelpers.handleError(axiosError));
     }
   };
 
@@ -135,12 +128,12 @@ const AdminLoginPage = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            <button
-              type="submit"
+            <Link
+              to={'/details'}
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2 rounded-full transition duration-300"
             >
               Login
-            </button>
+            </Link>
           </motion.div>
         </form>
 

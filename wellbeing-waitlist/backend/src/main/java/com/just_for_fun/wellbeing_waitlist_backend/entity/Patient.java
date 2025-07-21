@@ -2,8 +2,6 @@ package com.just_for_fun.wellbeing_waitlist_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.sql.Timestamp;
 

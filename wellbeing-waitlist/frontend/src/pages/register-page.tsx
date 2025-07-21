@@ -1,14 +1,45 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import planeImage from '../assets/images/plane-background.jpg';
 import logoHeaderImage from '../assets/images/logo-header.png';
 import logoFooterImage from '../assets/images/logo-footer.png';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { patientAPI, apiHelpers } from '../api/axios-setup';
+import { AxiosError } from 'axios';
+import Patient from '../types/patient';
+import { useNavigation } from 'react-router-dom';
+
+const fetchPatients = async (
+  setPatients: React.Dispatch<React.SetStateAction<Patient[]>>,
+  setMessage: React.Dispatch<React.SetStateAction<string>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  try {
+    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+    const response = isAdmin
+      ? await patientAPI.getPatients()
+      : await patientAPI.getPatients(false);
+    setPatients(response.data);
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    setMessage(apiHelpers.handleError(axiosError));
+  } finally {
+    setLoading(false);
+  }
+};
 
 const RegisterPage = () => {
   usePageTitle("Register Patient");
-  
+
+  const navigate = useNavigate();
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchPatients(setPatients, setMessage, setLoading);
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -33,22 +64,17 @@ const RegisterPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/v1/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      await patientAPI.registerPatient(formData);
+      setMessage('Registration successful!');
+      setFormData({ name: '', age: '', gender: 'none', problem: '' });
 
-      const data = await res.json();
-      setMessage(data.message || (res.ok ? 'Registration successful!' : 'Registration failed.'));
-      if (res.ok) {
-        setFormData({ name: '', age: '', gender: 'none', problem: '' });
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage('An unexpected error occurred.');
+      navigate('/details');
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      setMessage(apiHelpers.handleError(axiosError));
     }
   };
+
 
   const handleReset = () => {
     setFormData({ name: '', age: '', gender: 'none', problem: '' });

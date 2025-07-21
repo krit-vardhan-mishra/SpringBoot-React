@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { patientAPI, apiHelpers } from '../api/axios-setup';
+import { AxiosError } from 'axios';
 
 const PatientForm = () => {
   const [formData, setFormData] = useState({ name: '', age: '', gender: '', problem: '' });
@@ -11,10 +12,11 @@ const PatientForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/patients', formData);
+      const response = await patientAPI.registerPatient(formData);
       console.log('Saved:', response.data);
     } catch (error) {
-      console.error('Error saving patient:', error);
+      const axiosError = error as AxiosError;
+      console.error('Error saving patient:', apiHelpers.handleError(axiosError));
     }
   };
 
