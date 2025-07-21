@@ -9,29 +9,6 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { patientAPI, apiHelpers } from '../api/axios-setup';
 import { AxiosError } from 'axios';
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: "easeInOut",
-    },
-  },
-};
-
 const DetailsPage = () => {
   usePageTitle("Patient Details");
 
@@ -39,9 +16,9 @@ const DetailsPage = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const queryParams = new URLSearchParams(window.location.search);
+  const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
   const urlMessage = queryParams.get('message');
   if (urlMessage) setMessage(urlMessage);
-  const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -64,7 +41,7 @@ const DetailsPage = () => {
     const urlMessage = queryParams.get('message');
 
     if (urlMessage) setMessage(urlMessage);
-  }, []);
+  }, [isAdmin]);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -78,10 +55,33 @@ const DetailsPage = () => {
     });
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 10 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    },
+  };
+
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat pt-20 pb-12 relative"
       style={{ backgroundImage: `url(${planeImage})` }}>
-      
+
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/70 to-purple-700/70 backdrop-blur-sm z-0" />
 
@@ -92,7 +92,7 @@ const DetailsPage = () => {
       </motion.div>
 
       {/* Main Content */}
-      <motion.div className="max-w-6xl mx-auto bg-white/95 rounded-2xl shadow-xl p-8 z-10 relative"
+      <motion.div className="max-w-xl mx-auto bg-white/95 rounded-2xl shadow-xl p-8 z-10 relative"
         variants={container} initial="hidden" animate="show">
         <motion.h2 className="text-3xl font-bold text-gray-900 mb-8 text-center tracking-tight" variants={item}>
           Patient Waiting List
@@ -124,9 +124,9 @@ const DetailsPage = () => {
               </thead>
               <tbody>
                 {patients.map((patient, index) => (
-                  <motion.tr 
-                    key={patient.id} 
-                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-indigo-50 transition-colors duration-200`} 
+                  <motion.tr
+                    key={patient.id}
+                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-indigo-50 transition-colors duration-200`}
                     variants={item}
                   >
                     <td className="p-4 text-gray-800">{index + 1}</td>
@@ -136,8 +136,7 @@ const DetailsPage = () => {
                     <td className="p-4 text-gray-800">{patient.problem}</td>
                     <td className="p-4 text-gray-800">{formatDate(patient.arrivalTime)}</td>
                     <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        patient.emergencyLevel} bg-green-100 text-green-800`}>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800`}>
                         {patient.emergencyLevel}
                       </span>
                     </td>

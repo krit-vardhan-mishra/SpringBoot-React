@@ -5,24 +5,23 @@ import logoHeaderImage from '../assets/images/logo-header.png';
 import logoFooterImage from '../assets/images/logo-footer.png';
 import { usePageTitle } from '../hooks/usePageTitle';
 
-// Animation variants
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2
-    }
-  }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0 }
-};
-
 const HomePage = () => {
   usePageTitle("Well-being Waitlist");
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0 }
+  };
 
   return (
     <motion.div

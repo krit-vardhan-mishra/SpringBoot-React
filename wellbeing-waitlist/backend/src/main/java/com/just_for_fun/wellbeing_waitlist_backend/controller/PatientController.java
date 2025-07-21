@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/v1/patients")
@@ -80,4 +84,27 @@ public class PatientController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> putMethodName(@PathVariable Long id) {
+        Optional<Patient> patient = patientRepository.findById(id);
+        if (patient.isPresent()) {
+            Patient updatedPatient = patient.get();
+            updatedPatient.setCured(true);
+            patientRepository.save(updatedPatient);
+            return new ResponseEntity<>(Map.of("message", "Patient with ID " + id + " has been updated successfully."), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(Map.of("error", "Patient not found"), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePatient(@PathVariable Long id) {
+        Optional<Patient> patient = patientRepository.findById(id);
+        if (patient.isPresent()) {
+            patientRepository.delete(patient.get());
+            return new ResponseEntity<>(Map.of("message", "Patient deleted successfully"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(Map.of("error", "Patient not found"), HttpStatus.NOT_FOUND);
+        }
+    }
 }

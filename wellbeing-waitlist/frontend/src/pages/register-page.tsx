@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import planeImage from '../assets/images/plane-background.jpg';
@@ -8,26 +8,6 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { patientAPI, apiHelpers } from '../api/axios-setup';
 import { AxiosError } from 'axios';
 import Patient from '../types/patient';
-import { useNavigation } from 'react-router-dom';
-
-const fetchPatients = async (
-  setPatients: React.Dispatch<React.SetStateAction<Patient[]>>,
-  setMessage: React.Dispatch<React.SetStateAction<string>>,
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-  try {
-    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-    const response = isAdmin
-      ? await patientAPI.getPatients()
-      : await patientAPI.getPatients(false);
-    setPatients(response.data);
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    setMessage(apiHelpers.handleError(axiosError));
-  } finally {
-    setLoading(false);
-  }
-};
 
 const RegisterPage = () => {
   usePageTitle("Register Patient");
@@ -75,9 +55,27 @@ const RegisterPage = () => {
     }
   };
 
-
   const handleReset = () => {
     setFormData({ name: '', age: '', gender: 'none', problem: '' });
+  };
+
+  const fetchPatients = async (
+    setPatients: React.Dispatch<SetStateAction<Patient[]>>,
+    setMessage: React.Dispatch<SetStateAction<string>>,
+    setLoading: React.Dispatch<SetStateAction<boolean>>
+  ) => {
+    try {
+      const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+      const response = isAdmin
+        ? await patientAPI.getPatients()
+        : await patientAPI.getPatients(false);
+      setPatients(response.data);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      setMessage(apiHelpers.handleError(axiosError));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
