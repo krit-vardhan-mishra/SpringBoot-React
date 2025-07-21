@@ -1,12 +1,13 @@
-package com.wellbeing_waitlist.model;
+package com.just_for_fun.wellbeing_waitlist_backend.entity;
 
 import java.util.*;
 import java.util.concurrent.*;
 
-import com.wellbeing_waitlist.repository.PatientRepository;
 import jakarta.annotation.PreDestroy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.just_for_fun.wellbeing_waitlist_backend.repository.PatientRepository;
 
 @Component
 public class MaxHeapCustom {
