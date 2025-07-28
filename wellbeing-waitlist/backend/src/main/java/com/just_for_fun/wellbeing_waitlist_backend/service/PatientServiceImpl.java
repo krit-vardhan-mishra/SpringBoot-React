@@ -1,6 +1,6 @@
 package com.just_for_fun.wellbeing_waitlist_backend.service;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ public class PatientServiceImpl implements PatientService {
 
         int emergencyLevel = emergencyLevelService.calculateEmergencyLevel(patient.getProblem());
         patient.setEmergencyLevel(emergencyLevel);
-        patient.setArrivalTime(new Timestamp(System.currentTimeMillis()));
+        patient.setArrivalTime(LocalDateTime.now());
         patient.setCured(false);
         patientRepository.save(patient);
     }

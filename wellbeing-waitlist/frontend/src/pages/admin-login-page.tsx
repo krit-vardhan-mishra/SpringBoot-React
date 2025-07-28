@@ -15,6 +15,7 @@ const AdminLoginPage = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,7 @@ const AdminLoginPage = () => {
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    if (errorMessage) setErrorMessage(''); // Clear error when user types
   };
 
   const togglePasswordVisibility = () => {
@@ -35,15 +37,22 @@ const AdminLoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage('');
+    
     try {
       const response = await patientAPI.adminLogin(password);
       if (response.status === 200) {
         sessionStorage.setItem('isAdmin', 'true');
-        navigate('/admin-dashboard');
+        sessionStorage.setItem('authToken', 'admin-authenticated'); // Optional token
+        // Navigate to details page with success message and admin flag
+        navigate('/details?message=Admin login successful - Full access granted&type=success');
       }
     } catch (error) {
       const axiosError = error as AxiosError;
       setErrorMessage(apiHelpers.handleError(axiosError));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -83,7 +92,7 @@ const AdminLoginPage = () => {
 
         {errorMessage && (
           <motion.p
-            className="text-red-600 text-center mb-4"
+            className="text-red-600 bg-red-50 p-3 rounded-lg text-center mb-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
@@ -99,7 +108,7 @@ const AdminLoginPage = () => {
             transition={{ delay: 0.8 }}
           >
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Enter Password
+              Enter Admin Password
             </label>
             <div className="relative">
               <input
@@ -110,12 +119,14 @@ const AdminLoginPage = () => {
                 required
                 value={password}
                 onChange={handlePasswordChange}
-                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                disabled={isLoading}
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:bg-gray-100"
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 focus:outline-none"
+                disabled={isLoading}
               >
                 <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="h-5 w-5" />
               </button>
@@ -128,12 +139,13 @@ const AdminLoginPage = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            <Link
-              to={'/details'}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2 rounded-full transition duration-300"
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium px-6 py-2 rounded-full transition duration-300"
             >
-              Login
-            </Link>
+              {isLoading ? 'Logging in...' : 'Login'}
+            </button>
           </motion.div>
         </form>
 
@@ -145,8 +157,8 @@ const AdminLoginPage = () => {
           transition={{ delay: 1.0 }}
         >
           <p className="text-blue-700 font-medium hover:text-black hover:underline">
-            <Link to="/">Return to home page
-            </Link></p>
+            <Link to="/">Return to home page</Link>
+          </p>
         </motion.div>
       </motion.div>
     </div>

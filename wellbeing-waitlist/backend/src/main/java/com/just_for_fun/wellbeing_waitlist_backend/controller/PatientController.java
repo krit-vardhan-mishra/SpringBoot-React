@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import com.just_for_fun.wellbeing_waitlist_backend.service.PatientServiceImpl;
+
+import jakarta.validation.Valid;
+
 import com.just_for_fun.wellbeing_waitlist_backend.entity.Patient;
 import com.just_for_fun.wellbeing_waitlist_backend.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,7 @@ public class PatientController {
     private static final String ADMIN_PASSWORD = "root";
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerPatient(@RequestBody Patient patient) {
+    public ResponseEntity<?> registerPatient(@Valid @RequestBody Patient patient) {
         try {
             patientService.addPatient(patient);
             return new ResponseEntity<>(patient, HttpStatus.CREATED);

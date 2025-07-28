@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import planeImage from '../assets/images/plane-background.jpg';
 import logoHeaderImage from '../assets/images/logo-header.png';
 import logoFooterImage from '../assets/images/logo-footer.png';
@@ -7,6 +8,16 @@ import { usePageTitle } from '../hooks/usePageTitle';
 
 const HomePage = () => {
   usePageTitle("Well-being Waitlist");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromAdmin = urlParams.get('fromAdmin');
+    
+    if (!fromAdmin) {
+      sessionStorage.removeItem('isAdmin');
+      sessionStorage.removeItem('authToken');
+    }
+  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -76,6 +87,14 @@ const HomePage = () => {
               Check Details
             </Link>
           </motion.div>
+        </motion.div>
+
+        {/* Info about admin access */}
+        <motion.div 
+          className="mt-6 text-center text-sm text-gray-600"
+          variants={item}
+        >
+          <p>For admin access, click "Check Details" then "Admin Access Only"</p>
         </motion.div>
       </motion.div>
     </motion.div>
