@@ -2,7 +2,12 @@ package com.justforfun.eazystore_backend.controller;
 
 import com.justforfun.eazystore_backend.dto.ContactDto;
 import com.justforfun.eazystore_backend.service.ContactService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,9 +18,9 @@ public class ContactController {
     private final ContactService contactService;
 
     @PostMapping("/")
-    public String saveContact(@RequestBody ContactDto contactDto) {
-        boolean isSaved = contactService.saveContact(contactDto);
-        return (isSaved ? "Request processed successfully...!" : "An error occurred. Please try again or contact Dev team." );
+    public ResponseEntity<String> saveContact(@Valid @RequestBody ContactDto contactDto) {
+        contactService.saveContact(contactDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Request processed successfully...!");
     }
 
 }

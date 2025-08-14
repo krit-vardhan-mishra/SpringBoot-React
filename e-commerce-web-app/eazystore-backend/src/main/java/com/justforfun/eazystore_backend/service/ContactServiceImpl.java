@@ -19,17 +19,11 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public boolean saveContact(ContactDto contactDto) {
-        try {
-            Contact contact = transformToEntity(contactDto);
-            contact.setCreatedAt(Instant.now());
-            contact.setCreatedBy(contactDto.getName());
-            contactRepository.save(contact);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        Contact contact = transformToEntity(contactDto);
+        contactRepository.save(contact);
+        return true;
     }
-    
+
     private Contact transformToEntity(ContactDto contactDto) {
         Contact contact = new Contact();
         BeanUtils.copyProperties(contactDto, contact);

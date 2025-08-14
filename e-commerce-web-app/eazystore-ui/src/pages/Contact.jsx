@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
 import { Form, useActionData, useNavigation, useSubmit } from 'react-router-dom';
 import apiClient from '../api/apiClient';
 import SuccessAnimation from '../components/SuccessAnimation';
 import { toast } from 'react-toastify';
 
 const Contact = () => {
-  const { isDarkMode } = useTheme();
   const actionData = useActionData();
   const navigation = useNavigation();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -28,20 +26,10 @@ const Contact = () => {
     setShowSuccess(false);
     setFormKey(prev => prev + 1);
     formRef.current?.reset();
-
     toast.success("Your message has been submitted successfully...!");
   }
 
   const isSubmitting = navigation.state === 'submitting';
-
-  const inputBaseClasses = `p-3 rounded-md border-2 border-blue-500 focus:outline-none focus:ring-2 
-    ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`;
-
-  const getInputClasses = () =>
-    `${inputBaseClasses} ${isDarkMode
-      ? 'bg-[#19242D] border-[#2d2d2d] text-white placeholder-gray-400 focus:ring-[#8258d6]'
-      : 'bg-white border-gray-600 text-black placeholder-gray-500 focus:ring-[#4c1eab]'
-    }`;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -66,70 +54,111 @@ const Contact = () => {
   }
 
   return (
-    <div className={`flex flex-col items-center m-4 pt-4 ${isDarkMode ? 'bg-[#0E1520]' : 'bg-[#F0F3F2]'}`}>
-      <span className={`text-4xl font-bold mb-6 ${isDarkMode ? 'text-[#c7beda]' : 'text-[#4c1eab]'}`}>
+    <div className="flex flex-col items-center m-4 pt-4 bg-[#F0F3F2] dark:bg-[#0E1520]">
+      <span className="text-4xl font-bold mb-6 text-[#4c1eab] dark:text-[#c7beda]">
         Contact Us
       </span>
 
       <div className="max-w-3xl w-full px-4 space-y-6 text-center">
-        <p className={`text-lg md:text-sm ${isDarkMode ? 'text-[#dbd7e4]' : 'text-[#2d2b31]'}`}>
+        <p className="text-lg md:text-sm text-[#2d2b31] dark:text-[#dbd7e4]">
           We'd love to hear from you! If you have any questions, feedback, or suggestions, please don't hesitate to reach out.
         </p>
 
         <Form ref={formRef} onSubmit={handleSubmit} key={formKey} method='POST' className="flex flex-col space-y-4">
           {/* Name Input */}
           <div className="flex flex-col text-left">
-            <label htmlFor="name" className={`text-lg font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Name</label>
+            <label htmlFor="name" className="text-lg font-semibold mb-1 text-black dark:text-white">Name</label>
             <input
               type="text"
               id="name"
+              minLength={5}
+              maxLength={30}
               name="name"
               disabled={isSubmitting}
-              className={getInputClasses()}
+              className={`p-3 rounded-md border-2 border-blue-500 focus:outline-none focus:ring-2 
+                bg-white focus:border-gray-600 text-black placeholder-gray-500 focus:ring-[#4c1eab]
+                dark:bg-[#19242D] dark:border-[#2d2d2d] dark:text-white dark:placeholder-gray-400 dark:focus:ring-[#8258d6]
+                ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder="Your Name"
               required
             />
+            {actionData?.errors?.name && (
+              <p className="text-red-500 text-sm mt-1">
+                {actionData.errors.name}
+              </p>
+            )}
           </div>
 
-          {/* Email and Mobile Number Inputs */}
+          {/* Email Input */}
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
             <div className="flex flex-col text-left flex-1">
-              <label htmlFor="email" className={`text-lg font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Email</label>
+              <label htmlFor="email" className="text-lg font-semibold mb-1 text-black dark:text-white">Email</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 disabled={isSubmitting}
-                className={getInputClasses()}
+                className={`p-3 rounded-md border-2 border-blue-500 focus:outline-none focus:ring-2 
+                  bg-white border-gray-600 text-black placeholder-gray-500 focus:ring-[#4c1eab]
+                  dark:bg-[#19242D] dark:border-[#2d2d2d] dark:text-white dark:placeholder-gray-400 dark:focus:ring-[#8258d6]
+                  ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                 placeholder="Your Email"
                 required
               />
+              {actionData?.errors?.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {actionData.errors.email}
+                </p>
+              )}
             </div>
+
+            {/* Mobile Number Input */}
             <div className="flex flex-col text-left flex-1">
-              <label htmlFor="mobileNumber" className={`text-lg font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Mobile Number</label>
+              <label htmlFor="mobileNumber" className="text-lg font-semibold mb-1 text-black dark:text-white">Mobile Number</label>
               <input
                 type="tel"
                 id="mobileNumber"
+                pattern='^\d{10}$'
+                required
                 name="mobileNumber"
                 disabled={isSubmitting}
-                className={getInputClasses()}
+                title='Mobile number must be exactly 10 digits'
+                className={`p-3 rounded-md border-2 border-blue-500 focus:outline-none focus:ring-2 
+                  bg-white border-gray-600 text-black placeholder-gray-500 focus:ring-[#4c1eab]
+                  dark:bg-[#19242D] dark:border-[#2d2d2d] dark:text-white dark:placeholder-gray-400 dark:focus:ring-[#8258d6]
+                  ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                 placeholder="Your Mobile Number"
               />
+              {actionData?.errors?.mobileNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {actionData.errors.mobileNumber}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Message Textarea */}
           <div className="flex flex-col text-left">
-            <label htmlFor="message" className={`text-lg font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Message</label>
+            <label htmlFor="message" className="text-lg font-semibold mb-1 text-black dark:text-white">Message</label>
             <textarea
               id="message"
               rows="5"
               name="message"
               disabled={isSubmitting}
-              className={`${getInputClasses()} resize-y`}
+              minLength={5}
+              maxLength={500}
+              className={`p-3 rounded-md border-2 border-blue-500 focus:outline-none focus:ring-2 resize-y
+                bg-white border-gray-600 text-black placeholder-gray-500 focus:ring-[#4c1eab]
+                dark:bg-[#19242D] dark:border-[#2d2d2d] dark:text-white dark:placeholder-gray-400 dark:focus:ring-[#8258d6]
+                ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder="Your Message"
               required
             ></textarea>
+            {actionData?.errors?.message && (
+              <p className="text-red-500 text-sm mt-1">
+                {actionData.errors.message}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
@@ -169,9 +198,14 @@ export async function contactAction({ request }) {
     await apiClient.post('/contacts/', contactData);
     return { success: 'true' };
   } catch (error) {
-    return {
-      error: error.message || 'Failed to submit your message. Please try again.',
-      success: 'false'
-    };
+    if (error.response?.status === 400) {
+      return { success: false, errors: error.response?.data };
+    }
+    throw new Response(
+      error.response?.data?.errorMessage ||
+      error.message ||
+      "Failed to submit your message. Please try again.",
+      { status: error.status || 500 }
+    );
   }
 }

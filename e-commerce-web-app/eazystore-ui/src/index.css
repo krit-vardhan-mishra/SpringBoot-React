@@ -4,22 +4,27 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-body.light {
-  background-color: #F0F3F2;
+:root {
+  --bg-light: #F0F3F2;
+  --bg-dark: #0E1520;
+}
+
+body {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+body:not(.dark) {
+  background-color: var(--bg-light);
   color: black;
 }
 
 body.dark {
-  background-color: #0E1520;
+  background-color: var(--bg-dark);
   color: white;
 }
 
-body {
-  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
-}
-
 * {
-  transition: color 0.5s ease-in-out, background-color 0.5s ease-in-out;
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
 @keyframes heartbeat {
@@ -41,4 +46,6 @@ body {
     --color-dark: #4C1D95;
     --color-lighter: #F5F3FF;
     --color-light: #DDD6FE;
+    --color-normalbg: #F0F3F2;
+    --color-darkbg: #0E1520;
 }

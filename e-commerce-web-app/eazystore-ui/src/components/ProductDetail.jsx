@@ -3,8 +3,10 @@ import { faArrowLeft, faShoppingBasket, faShoppingCart } from '@fortawesome/free
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 function ProductDetail() {
+    const { addToCart } = useCart();
     const location = useLocation();
     const product = location.state?.product;
     const navigate = useNavigate();
@@ -19,7 +21,7 @@ function ProductDetail() {
         const { left, top, width, height } = zoomRef.current.getBoundingClientRect();
         const x = ((e.pageX - left) / width) * 100;
         const y = ((e.pageY - top) / height) * 100;
-        setBackgroundPosition(`${x}% ${y}%`); 
+        setBackgroundPosition(`${x}% ${y}%`);
     };
 
     const handleMouseEnter = () => setIsHovering(true);
@@ -29,6 +31,13 @@ function ProductDetail() {
     }
 
     const handleViewCart = () => navigate("/cart");
+
+    const handleAddClick = (e) => {
+        e.preventDefault();
+        if (quantity > 0) {
+            addToCart(product, quantity);
+        }
+    }
 
     return (
         <div className="min-h-[852px] flex items-center justify-center px-6 py-8 font-primary bg-normalbg dark:bg-darkbg">
@@ -44,14 +53,14 @@ function ProductDetail() {
                         backgroundImage: `url(${imagePath})`,
                         backgroundSize: isHovering ? "200%" : "cover",
                         backgroundPosition: backgroundPosition,
-                        minHeight: "400px", // Add minimum height
+                        minHeight: "400px",
                     }}
                 >
                     <img
                         src={imagePath}
                         alt={name}
                         className="w-full h-full opacity-0"
-                        style={{ minHeight: "400px" }} // Match the container height
+                        style={{ minHeight: "400px" }}
                     />
                 </div>
 
@@ -97,19 +106,20 @@ function ProductDetail() {
                         </div>
 
                         {/* Add to Cart Button */}
-                        <button className="w-full px-4 py-2 bg-primary dark:bg-light text-white dark:text-black rounded-md text-lg font-semibold hover:bg-dark dark:hover:bg-lighter transition">
+                        <button className="w-full px-4 py-2 bg-primary dark:bg-light text-white dark:text-black rounded-md text-lg font-semibold hover:bg-dark dark:hover:bg-lighter transition"
+                            onClick={handleAddClick}>
                             Add to Cart
                             <FontAwesomeIcon icon={faShoppingCart} className="ml-2" />
                         </button>
 
                         {/* View Cart Button */}
-                        <button
+                        <Link
                             onClick={handleViewCart}
-                            className="w-full px-4 py-2 bg-primary dark:bg-light text-white dark:text-black rounded-md text-lg font-semibold hover:bg-dark dark:hover:bg-lighter transition"
+                            className="w-full px-4 py-2 bg-primary dark:bg-light text-white dark:text-black rounded-md text-lg font-semibold hover:bg-dark dark:hover:bg-lighter transition flex justify-center items-center"
                         >
                             View Cart
                             <FontAwesomeIcon icon={faShoppingBasket} className="ml-2" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

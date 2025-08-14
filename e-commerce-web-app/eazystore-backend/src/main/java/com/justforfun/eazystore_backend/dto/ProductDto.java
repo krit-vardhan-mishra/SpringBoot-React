@@ -17,4 +17,5 @@ public class ProductDto {
     private int popularity;
     private String imageUrl;
     private Instant createdAt;
+    
 }

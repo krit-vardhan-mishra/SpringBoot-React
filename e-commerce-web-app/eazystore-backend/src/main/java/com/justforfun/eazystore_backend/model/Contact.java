@@ -1,10 +1,5 @@
 package com.justforfun.eazystore_backend.model;
 
-import java.time.Instant;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +10,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "contacts")
-public class Contact {
+public class Contact extends BaseModal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,19 +28,5 @@ public class Contact {
 
     @Column(name = "message", nullable = false, length = 500)
     private String message;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @Column(name = "created_by", nullable = false, length = 20)
-    private String createdBy;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
-    @Column(name = "updated_by", length = 20)
-    private String updatedBy;
 
 }
