@@ -3,5 +3,3 @@ e-commerce-web-app/.vscode/launch.json
 e-commerce-web-app/eazystore-backend/src/main/java/com/justforfun/eazystore_backend/constants/ApplicationConstants.java
 e-commerce-web-app/eazystore-backend/src/main/java/com/justforfun/eazystore_backend/constants/ApplicationConstants.java
 e-commerce-web-app/eazystore-ui/.env
-e-commerce-web-app/eazystore-ui/.env
-.env
