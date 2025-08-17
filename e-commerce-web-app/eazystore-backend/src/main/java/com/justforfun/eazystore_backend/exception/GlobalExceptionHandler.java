@@ -24,25 +24,37 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception, WebRequest webRequest) {
-        ErrorResponseDto errorResponseDto = new ErrorResponseDto(webRequest.getDescription(false), HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), LocalDateTime.now());
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(webRequest.getDescription(false),
+                HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), LocalDateTime.now());
         return ResponseEntity.internalServerError().body(errorResponseDto);
     }
-    
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException exception, WebRequest webRequest) {
+    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException exception,
+            WebRequest webRequest) {
         Map<String, String> errors = new HashMap<>();
         List<FieldError> fieldErrorList = exception.getBindingResult().getFieldErrors();
         fieldErrorList.forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
-    
+
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException exception) {
+    public ResponseEntity<Map<String, String>> handleConstraintViolationException(
+            ConstraintViolationException exception) {
         Map<String, String> errors = new HashMap<>();
         Set<ConstraintViolation<?>> constraintViolationSet = exception.getConstraintViolations();
-        constraintViolationSet.forEach(constraintViolation -> 
-                errors.put(constraintViolation.getPropertyPath().toString(), 
-                constraintViolation.getMessage()));
+        constraintViolationSet
+                .forEach(constraintViolation -> errors.put(constraintViolation.getPropertyPath().toString(),
+                        constraintViolation.getMessage()));
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception,
+            WebRequest webRequest) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false), HttpStatus.NOT_FOUND,
+                exception.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseDto);
     }
 }

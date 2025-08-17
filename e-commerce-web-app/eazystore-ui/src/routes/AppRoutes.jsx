@@ -10,6 +10,7 @@ import Error from '../pages/Error';
 import 'react-toastify/dist/ReactToastify.css';
 import ProductDetail from '../components/ProductDetail.jsx';
 import CheckoutForm from '../pages/CheckoutForm.jsx';
+import OrderSuccess from '../pages/OrderSuccess.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import Profile, { profileAction, profileLoader } from '../pages/Profile.jsx';
 import Orders from '../pages/Orders.jsx';
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
             {
                 element: <ProtectedRoute />, children: [
                     { path: 'checkout', element: <CheckoutForm /> },
+                    { path: 'order-success', element: <OrderSuccess /> },
                     { path: 'profile', element: <Profile />, loader: profileLoader, action: profileAction, shouldRevalidate: (actionResult) => { return !actionResult?.success } },
                     { path: 'orders', element: <Orders /> },
                     { path: 'admin/orders', element: <AdminOrders /> },

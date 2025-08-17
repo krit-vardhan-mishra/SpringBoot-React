@@ -35,7 +35,7 @@ public class JwtUtil {
                         authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.joining(",")))
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + 60 * 60 * 1000))
+                .expiration(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000))
                 .signWith(secretKey).compact();
         return jwt;
     }
