@@ -34,7 +34,7 @@ const router = createBrowserRouter([
             {
                 element: <ProtectedRoute />, children: [
                     { path: 'checkout', element: <CheckoutForm /> },
-                    { path: 'profile', element: <Profile />, loader: profileLoader, action: profileAction },
+                    { path: 'profile', element: <Profile />, loader: profileLoader, action: profileAction, shouldRevalidate: (actionResult) => { return !actionResult?.success } },
                     { path: 'orders', element: <Orders /> },
                     { path: 'admin/orders', element: <AdminOrders /> },
                     { path: 'admin/messages', element: <AdminMessages /> },

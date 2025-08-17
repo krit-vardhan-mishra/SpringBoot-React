@@ -1,8 +1,10 @@
-package com.justforfun.eazystore_backend.service;
+package com.justforfun.eazystore_backend.service.impl;
 
 import com.justforfun.eazystore_backend.dto.ProductDto;
 import com.justforfun.eazystore_backend.model.Product;
 import com.justforfun.eazystore_backend.repository.ProductRepository;
+import com.justforfun.eazystore_backend.service.ProductService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

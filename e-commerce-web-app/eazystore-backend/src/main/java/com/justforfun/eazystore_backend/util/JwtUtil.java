@@ -2,16 +2,14 @@ package com.justforfun.eazystore_backend.util;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
+import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
-
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-
 import com.justforfun.eazystore_backend.constants.ApplicationConstants;
 import com.justforfun.eazystore_backend.model.Customer;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +31,9 @@ public class JwtUtil {
                 .claim("username", fetchedCustomer.getName())
                 .claim("email", fetchedCustomer.getEmail())
                 .claim("mobileNumber", fetchedCustomer.getMobileNumber())
+                .claim("roles",
+                        authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.joining(",")))
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + 60 * 60 * 1000))
                 .signWith(secretKey).compact();

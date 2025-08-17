@@ -3,7 +3,8 @@ package com.justforfun.eazystore_backend.controller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,19 +15,21 @@ import org.springframework.security.authentication.password.CompromisedPasswordC
 import org.springframework.security.authentication.password.CompromisedPasswordDecision;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.justforfun.eazystore_backend.dto.AddressDto;
 import com.justforfun.eazystore_backend.dto.LoginRequestDto;
 import com.justforfun.eazystore_backend.dto.LoginResponseDto;
 import com.justforfun.eazystore_backend.dto.RegisterRequestDto;
 import com.justforfun.eazystore_backend.dto.UserDto;
 import com.justforfun.eazystore_backend.model.Customer;
+import com.justforfun.eazystore_backend.model.Role;
 import com.justforfun.eazystore_backend.repository.CustomerRepository;
 import com.justforfun.eazystore_backend.util.JwtUtil;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,6 +53,13 @@ public class AuthController {
             var userDto = new UserDto();
             var loggedInUser = (Customer) authentication.getPrincipal();
             BeanUtils.copyProperties(loggedInUser, userDto);
+            userDto.setRoles(authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")));
+            if (loggedInUser.getAddress() != null) {
+                AddressDto addressDto = new AddressDto();
+                BeanUtils.copyProperties(loggedInUser.getAddress(), addressDto);
+                userDto.setAddress(addressDto);
+            }
             String jwt = jwtUtil.generateToken(authentication);
             return ResponseEntity.ok()
                     .body(new LoginResponseDto(HttpStatus.OK.getReasonPhrase(), userDto, jwt));
@@ -88,6 +98,9 @@ public class AuthController {
         Customer customer = new Customer();
         BeanUtils.copyProperties(registerRequestDto, customer);
         customer.setPasswordHash(passwordEncoder.encode(registerRequestDto.getPassword()));
+        Role role = new Role();
+        role.setName("ROLE_USER");
+        customer.setRoles(Set.of(role));
         customerRepository.save(customer);
 
         return ResponseEntity

@@ -25,7 +25,9 @@ const Login = () => {
       loginSuccess({ jwtToken: actionData.jwtToken, user: actionData.user });
       toast.success(`Login successful, ${actionData.user.name}...!`);
       sessionStorage.removeItem("redirectPath");
-      navigate(from);
+      setTimeout(() => {
+        navigate(from);
+      }, 100);
     } else if (actionData?.errors) {
       toast.error(actionData.errors.message || "Login failed.");
     }
@@ -135,8 +137,8 @@ export async function loginAction({ request }) {
     }
     throw new Response(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to login. Please try again.",
+      error.message ||
+      "Failed to login. Please try again.",
       { status: error.response?.status || 500 }
     );
   }

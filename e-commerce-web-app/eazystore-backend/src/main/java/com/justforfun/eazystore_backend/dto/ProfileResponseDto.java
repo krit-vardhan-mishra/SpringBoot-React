@@ -1,13 +1,15 @@
 package com.justforfun.eazystore_backend.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-public class UserDto {
-    private Long id;
+@Getter
+@Setter
+public class ProfileResponseDto {
+    private Long customerId;
     private String name;
     private String email;
     private String mobileNumber;
-    private String roles;
     private AddressDto address;
+    private boolean emailUpdated;
 }

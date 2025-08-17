@@ -1,6 +1,4 @@
-package com.justforfun.eazystore_backend.service;
-
-import java.time.Instant;
+package com.justforfun.eazystore_backend.service.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -8,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.justforfun.eazystore_backend.dto.ContactDto;
 import com.justforfun.eazystore_backend.model.Contact;
 import com.justforfun.eazystore_backend.repository.ContactRepository;
+import com.justforfun.eazystore_backend.service.ContactService;
 
 import lombok.RequiredArgsConstructor;
 

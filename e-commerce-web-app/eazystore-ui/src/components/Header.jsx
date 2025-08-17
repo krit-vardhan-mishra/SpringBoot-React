@@ -14,12 +14,12 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
 function Header() {
-  const isAdmin = true;
   const navigate = useNavigate();
   const location = useLocation();
   const userMenuRef = useRef(null);
   const { totalQuantity } = useCart();
   const { isAuthenticated, user, logout } = useAuth();
+  const isAdmin = user?.roles?.includes('ROLE_ADMIN');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
