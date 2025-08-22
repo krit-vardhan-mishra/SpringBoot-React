@@ -8,11 +8,12 @@ import {
 } from "react-router-dom";
 import apiClient from "../api/apiClient";
 import { toast } from "react-toastify";
-import { useAuth } from "../context/AuthContext";
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../context/auth-slice';
 import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
-  const { loginSuccess } = useAuth();
+  const dispatch = useDispatch();
   const actionData = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -22,7 +23,9 @@ const Login = () => {
 
   useEffect(() => {
     if (actionData?.success) {
-      loginSuccess({ jwtToken: actionData.jwtToken, user: actionData.user });
+      dispatch(loginSuccess({ jwtToken: actionData.jwtToken, user: actionData.user }));
+      localStorage.setItem('jwtToken', actionData.jwtToken);
+      localStorage.setItem('user', JSON.stringify(actionData.user));
       toast.success(`Login successful, ${actionData.user.name}...!`);
       sessionStorage.removeItem("redirectPath");
       setTimeout(() => {
@@ -31,7 +34,7 @@ const Login = () => {
     } else if (actionData?.errors) {
       toast.error(actionData.errors.message || "Login failed.");
     }
-  }, [actionData]);
+  }, [actionData, dispatch, navigate, from]);
 
   useEffect(() => {
     document.title = "Login";

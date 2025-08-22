@@ -1,13 +1,15 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import emptyCartImage from "../assets/utils/emptycart.png";
-import { useCart } from '../context/CartContext';
+import { useSelector } from 'react-redux';
+import { selectCartItems } from '../context/cart-slice';
+import { selectIsAuthenticated, selectUser } from '../context/auth-slice';
 import CartTable from "../components/CartTable";
-import { useAuth } from "../context/AuthContext";
 
 const Cart = () => {
-  const { cart } = useCart();
-  const { isAuthenticated, user } = useAuth();
+  const cart = useSelector(selectCartItems);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
 
   const isAddressIncomplete = useMemo(() => {
     if (!isAuthenticated) return false;

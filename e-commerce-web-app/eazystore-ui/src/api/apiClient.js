@@ -19,10 +19,10 @@ apiClient.interceptors.request.use(
         }
 
         const safeMethods = ["GET", "HEAD", "OPTIONS"];
-        if (!safeMethods.includes(config.method.toUpperCase)) {
+        if (!safeMethods.includes(config.method.toUpperCase())) {
             let csrfToken = Cookies.get("XSRF-TOKEN");
             if (!csrfToken) {
-                await axios.get(`${import.meta.env.VITE_BASE_API_URL}/csrf-token`, { withCredentials: true, });
+                await axios.get(`${import.meta.env.VITE_BASE_API_URL}/csrf-token/`, { withCredentials: true, });
                 csrfToken = Cookies.get("XSRF-TOKEN");
                 if (!csrfToken) {
                     throw new Error("CSRF token not found");

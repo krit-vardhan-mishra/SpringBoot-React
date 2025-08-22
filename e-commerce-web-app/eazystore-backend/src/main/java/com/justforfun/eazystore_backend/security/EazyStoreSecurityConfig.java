@@ -18,13 +18,9 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import com.justforfun.eazystore_backend.filter.JWTTokenValidatorFilter;
-
 import lombok.RequiredArgsConstructor;
-
 import static org.springframework.security.config.Customizer.withDefaults;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +31,7 @@ import java.util.List;
 public class EazyStoreSecurityConfig {
 
     private final List<String> publicPaths;
+    private final JWTTokenValidatorFilter jwtTokenValidatorFilter;
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -45,9 +42,12 @@ public class EazyStoreSecurityConfig {
                 .authorizeHttpRequests((requests) -> {
                     publicPaths.forEach(path -> requests.requestMatchers(path).permitAll());
                     requests.requestMatchers("/api/v1/admin/**").hasRole("ADMIN");
-                    requests.anyRequest().hasAnyRole("USER", "ADMIN");
+                    requests.requestMatchers("/eazystore/actuator/**").hasRole("OPS_ENG");
+                    requests.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
+                            .hasAnyRole("DEV_ENG", "QA_ENG");
+                    requests.anyRequest().authenticated(); // Changed from hasAnyRole to authenticated
                 })
-                .addFilterBefore(new JWTTokenValidatorFilter(publicPaths), BasicAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .build();

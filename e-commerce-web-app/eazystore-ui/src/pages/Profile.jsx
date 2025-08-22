@@ -7,9 +7,10 @@ import {
   useNavigation,
   useNavigate,
 } from "react-router-dom";
-import PageTitle from "./PageTitle";
 import { toast } from "react-toastify";
-import { useAuth } from "../store/auth-context";
+import PageTitle from "../components/PageTitle";
+import { useDispatch } from 'react-redux';
+import { logout, loginSuccess } from '../context/auth-slice';
 
 export default function Profile() {
   const initialProfileData = useLoaderData();
@@ -17,7 +18,7 @@ export default function Profile() {
   const navigation = useNavigation();
   const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
-  const { logout, loginSuccess } = useAuth();
+  const dispatch = useDispatch();
 
   const [profileData, setProfileData] = useState(initialProfileData);
 
@@ -25,7 +26,9 @@ export default function Profile() {
     if (actionData?.success) {
       if (actionData.profileData.emailUpdated) {
         sessionStorage.setItem("skipRedirectPath", "true");
-        logout();
+        dispatch(logout());
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('user');
         toast.success(
           "Logged out successfully! Login again with updated email"
         );
@@ -40,11 +43,12 @@ export default function Profile() {
             ...actionData.profileData,
           };
 
-          loginSuccess(localStorage.getItem("jwtToken"), updatedUser);
+          dispatch(loginSuccess({ jwtToken: localStorage.getItem("jwtToken"), user: updatedUser }));
+          localStorage.setItem('user', JSON.stringify(updatedUser));
         }
       }
     }
-  }, [actionData]);
+  }, [actionData, dispatch, navigate]);
 
   const labelStyle =
     "block text-lg font-semibold text-primary dark:text-light mb-2";

@@ -3,7 +3,6 @@ package com.justforfun.eazystore_backend.controller;
 import com.justforfun.eazystore_backend.dto.ProductDto;
 import com.justforfun.eazystore_backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

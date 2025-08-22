@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
+import { selectIsAuthenticated } from '../context/auth-slice';
 
 const ProtectedRoute = () => {
-    const { isAuthenticated } = useAuth();
+    const isAuthenticated = useSelector(selectIsAuthenticated);
     const location = useLocation();
 
     useEffect(() => {

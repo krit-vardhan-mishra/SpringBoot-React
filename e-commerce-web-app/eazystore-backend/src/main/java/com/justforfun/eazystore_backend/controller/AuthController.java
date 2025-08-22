@@ -27,8 +27,8 @@ import com.justforfun.eazystore_backend.dto.LoginResponseDto;
 import com.justforfun.eazystore_backend.dto.RegisterRequestDto;
 import com.justforfun.eazystore_backend.dto.UserDto;
 import com.justforfun.eazystore_backend.model.Customer;
-import com.justforfun.eazystore_backend.model.Role;
 import com.justforfun.eazystore_backend.repository.CustomerRepository;
+import com.justforfun.eazystore_backend.repository.RoleRepository;
 import com.justforfun.eazystore_backend.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +42,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
+    private final RoleRepository roleRepository;
     private final CompromisedPasswordChecker compromisedPasswordChecker;
     private final JwtUtil jwtUtil;
 
@@ -98,9 +99,8 @@ public class AuthController {
         Customer customer = new Customer();
         BeanUtils.copyProperties(registerRequestDto, customer);
         customer.setPasswordHash(passwordEncoder.encode(registerRequestDto.getPassword()));
-        Role role = new Role();
-        role.setName("ROLE_USER");
-        customer.setRoles(Set.of(role));
+        roleRepository.findByName("ROLE_USER").ifPresent(
+                role -> customer.setRoles(Set.of(role)));
         customerRepository.save(customer);
 
         return ResponseEntity

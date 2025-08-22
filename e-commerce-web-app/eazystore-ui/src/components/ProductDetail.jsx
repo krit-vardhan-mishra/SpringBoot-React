@@ -3,10 +3,11 @@ import { faArrowLeft, faShoppingBasket, faShoppingCart } from '@fortawesome/free
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../context/cart-slice';
 
 function ProductDetail() {
-    const { addToCart } = useCart();
+    const dispatch = useDispatch();
     const location = useLocation();
     const product = location.state?.product;
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ function ProductDetail() {
     const handleAddClick = (e) => {
         e.preventDefault();
         if (quantity > 0) {
-            addToCart(product, quantity);
+            dispatch(addToCart({ product, quantity }));
         }
     }
 

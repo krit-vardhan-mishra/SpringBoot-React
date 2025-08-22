@@ -1,10 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCartItems, addToCart, removeFromCart } from "../context/cart-slice";
 import { X } from 'lucide-react';
 
 export default function CartTable() {
-    const { cart, addToCart, removeFromCart } = useCart();
+    const dispatch = useDispatch();
+    const cart = useSelector(selectCartItems);
 
     const subtotal = cart
         .reduce((acc, item) => acc + item.price * item.quantity, 0)
@@ -12,7 +14,10 @@ export default function CartTable() {
 
     const updateCartQuantity = (productId, quantity) => {
         const product = cart.find((item) => item.productId === productId);
-        addToCart(product, quantity - (product?.quantity || 0));
+        const quantityDifference = quantity - (product?.quantity || 0);
+        if (quantityDifference !== 0) {
+            dispatch(addToCart({ product, quantity: quantityDifference }));
+        }
     };
 
     return (
@@ -68,7 +73,7 @@ export default function CartTable() {
                             <td className="px-4 sm:px-6 py-4">
                                 <button
                                     aria-label="delete-item"
-                                    onClick={() => removeFromCart(item.productId)}
+                                    onClick={() => dispatch(removeFromCart({ productId: item.productId }))}
                                     className="text-primary dark:text-red-400 border border-primary dark:border-red-400 p-2 rounded hover:bg-lighter dark:hover:bg-red-700"
                                 >
                                     <X />

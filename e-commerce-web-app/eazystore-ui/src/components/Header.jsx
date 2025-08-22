@@ -9,16 +9,19 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import DarkModeToggleButton from './ui/DarkModeToggleButton';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectTotalQuantity } from '../context/cart-slice';
+import { selectIsAuthenticated, selectUser, logout } from '../context/auth-slice';
 import { toast } from 'react-toastify';
 
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const userMenuRef = useRef(null);
-  const { totalQuantity } = useCart();
-  const { isAuthenticated, user, logout } = useAuth();
+  const dispatch = useDispatch();
+  const totalQuantity = useSelector(selectTotalQuantity);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   const isAdmin = user?.roles?.includes('ROLE_ADMIN');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,7 +33,9 @@ function Header() {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    logout();
+    dispatch(logout());
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
     toast.success('Logged out successfully!');
     navigate('/home');
   };

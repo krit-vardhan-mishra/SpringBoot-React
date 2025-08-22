@@ -21,6 +21,7 @@
     "@mui/x-data-grid": "^8.8.0",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
+    "@reduxjs/toolkit": "^2.8.2",
     "@stripe/react-stripe-js": "^3.9.0",
     "@stripe/stripe-js": "^7.8.0",
     "axios": "^1.10.0",
@@ -32,6 +33,7 @@
     "react-dark-mode-toggle": "^0.2.0",
     "react-dom": "^19.1.0",
     "react-lottie-player": "^2.1.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.3",
     "react-toastify": "^11.0.5"
   },

@@ -2,15 +2,16 @@ import React from 'react';
 import { Button } from "./ui/Button";
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../context/cart-slice';
 
 const ProductCard = ({ product }) => {
   const { productId, name, subTitle, price, imageUrl } = product;
-  const { addToCart } = useCart();
+  const dispatch = useDispatch();
 
   const handleAddClick = (e) => {
     e.preventDefault();
-    addToCart(product, 1);
+    dispatch(addToCart({ product, quantity: 1 }));
   }
 
   return (

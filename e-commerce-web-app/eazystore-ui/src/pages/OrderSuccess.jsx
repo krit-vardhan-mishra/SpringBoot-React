@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import orderSuccessImg from "../assets/util/order-confirmed.png";
+import orderSuccessImg from '../assets/utils/order-confirmed.png'
 
-export default function OrderSuccess() {
+const OrderSuccess = () => {
     return (
     <div className="min-h-[852px]  py-12 sm:pt-20 font-primary bg-normalbg dark:bg-darkbg">
       <div className="max-w-4xl mx-auto px-4">
@@ -30,3 +30,5 @@ export default function OrderSuccess() {
     </div >
   );
 }
+
+export default OrderSuccess;

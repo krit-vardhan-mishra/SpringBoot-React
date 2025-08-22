@@ -1,33 +1,21 @@
 package com.justforfun.eazystore_backend.model;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "customers")
-public class Customer  extends BaseModal {
-
+public class Customer extends BaseModal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id", nullable = false, updatable = false)
+    @Column(name = "customer_id", nullable = false)
     private Long customerId;
 
     @Size(max = 100)
@@ -53,7 +41,8 @@ public class Customer  extends BaseModal {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Address address;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "customer_roles", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new LinkedHashSet<>();
+
 }
